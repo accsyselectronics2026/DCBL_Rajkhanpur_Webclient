@@ -20,9 +20,9 @@ interface UserRow extends RowDataPacket {
 }
 
 const pageMap: Record<string, string> = {
-  "/pages/dashboard": "/dashboard",
+  // "/pages/dashboard": "/dashboard",
   // "/bagcounter/index": "/bag-counter",
-  "/bagcounter/currenttranscation": "/current-transaction",
+  // "/bagcounter/currenttranscation": "/current-transaction",
   "/reports/index": "/reports",
 };
 
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
     });
   }
 
-  const redirect = pageMap[(user.default_page ?? "").toLowerCase()] ?? "/dashboard";
+  const redirect = pageMap[(user.default_page ?? "").toLowerCase()] ?? "/reports";
 
   await createSession({
     userId: user.record_id,

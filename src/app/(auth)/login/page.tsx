@@ -27,7 +27,7 @@ export default function LoginPage() {
         setError(data.message ?? `Login failed (status ${res.status})`);
         return;
       }
-      router.push(data.redirect ?? "/dashboard");
+      router.push(data.redirect ?? "/Bagcounter");
     } catch {
       setError("Cannot reach the server. Please try again.");
     } finally {
