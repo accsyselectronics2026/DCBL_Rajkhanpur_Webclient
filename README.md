@@ -128,4 +128,8 @@ These are intentionally public in `src/proxy.ts`, as they were in the PHP versio
 - Never commit `.env.local` or any file containing credentials.
 - The original database stores some passwords in plain text. Enable `UPGRADE_PASSWORDS=true` only after the PHP app is retired, so users are moved to bcrypt hashes on login.
 - Use a dedicated MySQL user with access to this database only, not `root`.
+<<<<<<< HEAD
 - Role permissions must be enforced in the API routes, not only by hiding menu items.
+=======
+- Role permissions must be enforced in the API routes, not only by hiding menu items.
+>>>>>>> b30ab83 (Reports Modification)

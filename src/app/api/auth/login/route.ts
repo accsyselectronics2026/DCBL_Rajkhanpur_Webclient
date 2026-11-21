@@ -3,9 +3,7 @@ import bcrypt from "bcryptjs";
 import { timingSafeEqual } from "crypto";
 import { RowDataPacket } from "mysql2";
 import { queryOne, execute } from "@/lib/db";
-import { createSession } from "@/app/api/auth/session";
-
-// export const runtime = "nodejs";
+import { createSession } from "@/lib/auth/session";
 
 interface UserRow extends RowDataPacket {
   record_id: number;
@@ -20,9 +18,7 @@ interface UserRow extends RowDataPacket {
 }
 
 const pageMap: Record<string, string> = {
-  // "/pages/dashboard": "/dashboard",
-  // "/bagcounter/index": "/bag-counter",
-  // "/bagcounter/currenttranscation": "/current-transaction",
+  "/bagcounter/index": "/bag-counter",
   "/reports/index": "/reports",
 };
 
