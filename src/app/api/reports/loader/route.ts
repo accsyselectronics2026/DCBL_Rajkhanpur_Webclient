@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { RowDataPacket } from "mysql2";
 import { query } from "@/lib/db";
-import { getSession } from "@/app/api/auth/session";
+import { getSession } from "@/lib/auth/session";
 
 export async function GET(req: Request) {
   if (!(await getSession())) {
@@ -20,15 +20,27 @@ export async function GET(req: Request) {
     return NextResponse.json({ message: "Missing filters" }, { status: 400 });
   }
 
+  // JOIN (1): how a cntrdb row finds its trip   -> confirm these two columns
+  // JOIN (2): how a trip finds its destination  -> confirm these two columns
   const marks = counters.map(() => "?").join(",");
-  const rows = await query<RowDataPacket>(
-    `SELECT * FROM cntrdb
-      WHERE CounterNo IN (${marks})
-        AND ActualCount > 0
-        AND StartTime BETWEEN ? AND ?
-      ORDER BY StartTime`,
-    [...counters, from, to]
-  );
-
-  return NextResponse.json({ rows });
+  try {
+    const rows = await query<RowDataPacket>(
+      `SELECT c.*, t.TRIP_NO, t.DESTINATION
+         FROM cntrdb c
+         LEFT JOIN transcation_table t ON t.TRUCK_NO = c.TruckNo       
+        WHERE c.CounterNo IN (${marks})
+          AND c.ActualCount > 0
+          AND c.StartTime BETWEEN ? AND ?
+        ORDER BY c.StartTime`,
+      [...counters, from, to]
+    );
+    return NextResponse.json({ rows });
+  } catch (e) {
+    console.error("loader report query failed:", e);
+    const detail = e instanceof Error ? e.message : "Unknown error";
+    return NextResponse.json(
+      { message: process.env.NODE_ENV === "development" ? detail : "Failed to load report" },
+      { status: 500 }
+    );
+  }
 }

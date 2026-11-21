@@ -5,8 +5,11 @@ import DataTable, { type Column } from "@/components/ui/DataTable";
 
 type Row = Record<string, string | number | null>;
 
-const LOADERS = [1, 2]; 
+const LOADERS = [1, 2];
 const today = () => new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD
+
+const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+const MINUTES = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
 
 function nextDay(d: string) {
   const x = new Date(`${d}T00:00:00`);
@@ -22,14 +25,42 @@ function shiftRange(date: string, shift: string): [string, string] {
 
 const input = "h-10 px-3 border border-gray-400 rounded-md bg-white text-gray-900";
 
+// 24-hour time picker: value is "HH:MM"
+function TimeField24({
+  value, onChange, label,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  label: string;
+}) {
+  const [hh, mm] = value.split(":");
+  return (
+    <span className="inline-flex items-center gap-1">
+      <select
+        aria-label={`${label} hour`} className={input} value={hh}
+        onChange={(e) => onChange(`${e.target.value}:${mm}`)}
+      >
+        {HOURS.map((h) => <option key={h} value={h}>{h}</option>)}
+      </select>
+      <span aria-hidden>:</span>
+      <select
+        aria-label={`${label} minute`} className={input} value={mm}
+        onChange={(e) => onChange(`${hh}:${e.target.value}`)}
+      >
+        {MINUTES.map((m) => <option key={m} value={m}>{m}</option>)}
+      </select>
+    </span>
+  );
+}
+
 const COLUMNS: Column<Row>[] = [
   { key: "CounterNo", header: "Loader No." },
-  { key: "CustomerName", header: "Customer Name" },
-  { key: "TruckNo", header: "Truck No." },
-  { key: "ShipmentNo", header: "Shipment No" },
-  { key: "Target", header: "Truck Set Point" },
+   { key: "TRIP_NO", header: "Wagon No" },
+  { key: "TruckNo", header: "Box No" },
+  { key: "Material", header: "Material" },
+  { key: "DESTINATION", header: "Destination" },
   { key: "ActualCount", header: "Actual Count" },
-  { key: "SKU", header: "SKU" },
+  // { key: "SKU", header: "SKU" },
   { key: "AddBags", header: "Add Bag" },
   { key: "DiffCount", header: "Difference" },
   { key: "StartTime", header: "Start Time" },
@@ -39,8 +70,10 @@ const COLUMNS: Column<Row>[] = [
 export default function ReportsPage() {
   const [mode, setMode] = useState<"DateWise" | "ShiftWise">("DateWise");
   const [counters, setCounters] = useState(LOADERS.join(","));
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [fromTime, setFromTime] = useState("00:00");
+  const [toDate, setToDate] = useState("");
+  const [toTime, setToTime] = useState("23:59");
   const [shiftDate, setShiftDate] = useState("");
   const [shift, setShift] = useState("A");
   const [rows, setRows] = useState<Row[] | null>(null);
@@ -51,8 +84,8 @@ export default function ReportsPage() {
   // today's date is read in the browser, after the page loads
   useEffect(() => {
     const t = today();
-    setFrom(`${t}T00:00`);
-    setTo(`${t}T23:59`);
+    setFromDate(t);
+    setToDate(t);
     setShiftDate(t);
   }, []);
 
@@ -60,8 +93,17 @@ export default function ReportsPage() {
     setError("");
     const [start, end] =
       mode === "DateWise"
-        ? [from.replace("T", " ") + ":00", to.replace("T", " ") + ":00"]
+        ? [`${fromDate} ${fromTime}:00`, `${toDate} ${toTime}:59`]
         : shiftRange(shiftDate, shift);
+
+    if (!start.trim() || !end.trim() || start.startsWith(" ") || end.startsWith(" ")) {
+      setError("Please select the date.");
+      return;
+    }
+    if (start > end) {
+      setError("The 'To' date and time must be after the 'From' date and time.");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -102,16 +144,28 @@ export default function ReportsPage() {
         </div>
 
         {mode === "DateWise" ? (
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
             <label className="font-semibold">From</label>
-            <input type="datetime-local" className={input} value={from} onChange={(e) => setFrom(e.target.value)} />
+            <input
+              type="date" className={input} value={fromDate} aria-label="From date"
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+            <TimeField24 label="From" value={fromTime} onChange={setFromTime} />
+
             <label className="font-semibold">To</label>
-            <input type="datetime-local" className={input} value={to} onChange={(e) => setTo(e.target.value)} />
+            <input
+              type="date" className={input} value={toDate} aria-label="To date"
+              onChange={(e) => setToDate(e.target.value)}
+            />
+            <TimeField24 label="To" value={toTime} onChange={setToTime} />
           </div>
         ) : (
           <div className="flex flex-wrap items-center gap-4">
             <label className="font-semibold">Date</label>
-            <input type="date" className={input} value={shiftDate} onChange={(e) => setShiftDate(e.target.value)} />
+            <input
+              type="date" className={input} value={shiftDate} aria-label="Shift date"
+              onChange={(e) => setShiftDate(e.target.value)}
+            />
             {["A", "B", "C"].map((s) => (
               <label key={s} className="flex items-center gap-2">
                 <input type="radio" checked={shift === s} onChange={() => setShift(s)} /> Shift {s}
