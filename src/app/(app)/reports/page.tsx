@@ -176,7 +176,7 @@ export default function ReportsPage() {
 
         <button
           type="button" onClick={load} disabled={loading}
-          className="h-10 px-5 rounded-md bg-[#8E3FD6] text-white font-semibold disabled:opacity-60"
+          className="h-10 px-5 rounded-md bg-[#68458a] text-white font-semibold disabled:opacity-60"
         >
           {loading ? "Loading..." : "View Report"}
         </button>

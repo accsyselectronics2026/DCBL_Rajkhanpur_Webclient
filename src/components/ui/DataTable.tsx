@@ -100,7 +100,7 @@ export default function DataTable<T extends Record<string, unknown>>({
 
   return (
     <section className="bg-white text-gray-900 rounded-lg shadow">
-      <div className="bg-[#8E3FD6] text-white font-semibold px-4 py-3 rounded-t-lg">{title}</div>
+      <div className="bg-[#68458a] text-white font-semibold px-4 py-3 rounded-t-lg">{title}</div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 p-4">
         <label className="flex items-center gap-2 text-sm">

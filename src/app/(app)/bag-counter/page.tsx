@@ -565,7 +565,7 @@ export default function BagCounterPage() {
   return (
     <div className="space-y-3 text-gray-900">
       {/* Page Header */}
-      <div className="rounded-md bg-[#082653] px-3 py-2 text-white">
+      <div  className="h-10 px-5 rounded-md bg-[#68458a] text-white font-semibold disabled:opacity-60">
         <h1 className="text-lg font-bold">Bag Counter</h1>
       </div>
       {/* Loader Selection
@@ -622,7 +622,7 @@ export default function BagCounterPage() {
               }}
               className={`rounded px-4 py-2 text-sm font-semibold ${
                 selectedLoader?.APP_ID === number
-                  ? "bg-[#082653] text-white"
+                  ? "bg-[#68458a] text-white"
                   : "bg-gray-300 text-gray-800 hover:bg-gray-400"
               }`}
             >
@@ -642,7 +642,7 @@ export default function BagCounterPage() {
       <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[2fr_1fr]">
         {/* Camera Stream */}
         <div className="overflow-hidden rounded-md border border-gray-300">
-          <div className="bg-[#082653] px-4 py-2 text-white">
+          <div className="bg-[#68458a] px-4 py-2 text-white">
             {selectedLoader?.APP_NAME || "Camera"} Live
           </div>
 
@@ -662,7 +662,7 @@ export default function BagCounterPage() {
         </div>
         {/* Loader Details */}
         <div className="flex flex-col self-start rounded-md border border-gray-300 bg-white">
-          <div className="bg-[#082653] px-4 py-2 text-white">
+          <div className="bg-[#68458a] px-4 py-2 text-white">
             {selectedLoader?.APP_NAME || "Loader Details"}
           </div>
           <div className="flex flex-col gap-5 p-4">
@@ -985,7 +985,7 @@ export default function BagCounterPage() {
                 <button
                   onClick={createTrip}
                   disabled={creatingTrip}
-                  className="rounded bg-[#082653] px-5 py-2 text-white hover:bg-blue-900 disabled:opacity-50"
+                  className="rounded bg-[#68458a] px-5 py-2 text-white bg-[#7824c7] disabled:opacity-50"
                 >
                   {creatingTrip ? "Creating..." : "Create Trip"}
                 </button>
@@ -1035,8 +1035,8 @@ export default function BagCounterPage() {
                 <button
                   onClick={addItem}
                   disabled={addingItem || !setValue}
-                  className="rounded bg-[#082653] px-5 py-2 text-white hover:bg-blue-900 disabled:opacity-50"
-                >
+                  className="rounded bg-[#68458a] px-5 py-2 text-white bg-[#8e33e4] disabled:opacity-50"
+                >             
                   {addingItem ? "Adding..." : "Add Item"}
                 </button>
               </div>
